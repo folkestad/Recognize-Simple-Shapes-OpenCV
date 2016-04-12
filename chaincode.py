@@ -207,11 +207,17 @@ box = cv2.cv.BoxPoints(rect)
 box = numpy.int0(box)
 cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
 
+print box
+
+box_ratio = float(box[3][0] - box[0][0])/float(box[1][1] - box[0][1])
+
+print box_ratio
+
 # drawing points that form major and minor axis
-cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255,0,255), -1)
-cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255,0,255), -1)
-cv2.circle(boundary_img, (minor[1][1], minor[1][0]), 3, (255,0,255), -1)
-cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255,0,255), -1)
+cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
+cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255, 0, 255), -1)
+cv2.circle(boundary_img, (minor[1][1], minor[1][0]), 3, (255, 0, 255), -1)
+cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255, 0, 255), -1)
 
 # showing images
 cv2.imshow('original', image)
