@@ -157,7 +157,7 @@ def boundary_and_chain(img):
     return boundary, chain
 
 
-image = cv2.imread('images/triangle.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+image = cv2.imread('images/ellipse.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 thresh = 127
 binary_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
@@ -184,15 +184,20 @@ print minor
 #plt.axis([0, 400, 0, 400])
 #plt.show()
 
-cv2.line(boundary_img, (major[1][1], major[1][0]), (major[0][1], major[0][0]), (255, 0, 0), 2)
-cv2.line(boundary_img, (minor[1][1], minor[1][0]), (minor[0][1], minor[0][0]), (255, 0, 0), 2)
-#numpy_boundary = numpy.array([])
-#for i in boundary_points:
-#    numpy.append(numpy_boundary, (i[1], i[0]))
-#rect = cv2.minAreaRect(numpy_boundary)
-#box = cv2.cv.BoxPoints(rect)
-#box = numpy.int0(box)
-#cv2.drawContours(image, [box], 0, (255, 0, 0), 2)
+cv2.line(boundary_img, (major[1][1], major[1][0]), (major[0][1], major[0][0]), (255, 0, 0), 1)
+cv2.line(boundary_img, (minor[1][1], minor[1][0]), (minor[0][1], minor[0][0]), (255, 0, 0), 1)
+
+
+# creating bounding box
+temp = []
+for i in boundary_points:
+    temp.append((i[1], i[0]))
+numpy_boundary = numpy.array(temp)
+
+rect = cv2.minAreaRect(numpy_boundary)
+box = cv2.cv.BoxPoints(rect)
+box = numpy.int0(box)
+cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
 
 cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255,0,255), -1)
 cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255,0,255), -1)
