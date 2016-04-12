@@ -156,34 +156,42 @@ def boundary_and_chain(img):
         chain.append((prev + 4) % 8)
     return boundary, chain
 
-
+# importing image as gray scale image (one channel only)
 image = cv2.imread('images/ellipse.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+
+# making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 thresh = 127
 binary_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
 
+# extracting boundary points and chain code through an implementation of Moore-Neighbor algorithm
 boundary_points, chain_code = boundary_and_chain(binary_img)
 
+#making new binary image from boundary points
 boundary_img = numpy.zeros(image.shape, numpy.uint8)
 for i in boundary_points:
     boundary_img[i[0]][i[1]] = 255
 
+# subsample of boundary points
 subsample = subsample_set(boundary_points)
 subsample_img = numpy.zeros(image.shape, numpy.uint8)
 for i in subsample:
     subsample_img[i[0]][i[1]] = 255
 
+# printing results
 print chain_code
+
+# normalizing chain code to make it rotation independent
 print first_difference(chain_code)
 print subsample
+
+# major and minor axis for making a bounding box. May not be applicable and should go for openCV method
 major = major_axis(boundary_points)
 minor = minor_axis(boundary_points, major)
 print major
 print minor
-#plt.plot([major[0][1], major[1][1], minor[0][1], minor[1][1]], [major[0][0], major[1][0], minor[0][0], minor[1][0]])
-#plt.axis([0, 400, 0, 400])
-#plt.show()
 
+#drawing major and minor axis
 cv2.line(boundary_img, (major[1][1], major[1][0]), (major[0][1], major[0][0]), (255, 0, 0), 1)
 cv2.line(boundary_img, (minor[1][1], minor[1][0]), (minor[0][1], minor[0][0]), (255, 0, 0), 1)
 
@@ -199,11 +207,13 @@ box = cv2.cv.BoxPoints(rect)
 box = numpy.int0(box)
 cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
 
+# drawing points that form major and minor axis
 cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255,0,255), -1)
 cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255,0,255), -1)
 cv2.circle(boundary_img, (minor[1][1], minor[1][0]), 3, (255,0,255), -1)
 cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255,0,255), -1)
 
+# showing images
 cv2.imshow('original', image)
 cv2.imshow('boundary', boundary_img)
 cv2.imshow('subsample', subsample_img)
