@@ -2,7 +2,6 @@ from __future__ import division
 import cv2
 import numpy
 import math
-import matplotlib.pyplot as plt
 
 
 __author__ = 'Eirik'
