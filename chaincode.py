@@ -171,7 +171,7 @@ def boxRatio(box):
     return ratio
 
 # importing image as gray scale image (one channel only)
-image = cv2.imread('images/square.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+image = cv2.imread('images/ellipse2.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
 # making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
