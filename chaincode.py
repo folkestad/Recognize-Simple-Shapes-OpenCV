@@ -161,6 +161,15 @@ def boundary_and_chain(img):
         chain.append((prev + 4) % 8)
     return boundary, chain
 
+def boxRatio(box):
+    xs = [p[0] for p in box]
+    ys = [p[1] for p in box]
+    xMin, xMax, yMin, yMax = min(xs), max(xs), min(ys), max(ys)
+    h = yMax - yMin
+    w = xMax - xMin
+    ratio = float(max(h, w))/float(min(h, w))
+    return ratio
+
 # importing image as gray scale image (one channel only)
 image = cv2.imread('images/square.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
@@ -215,7 +224,7 @@ cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
 print box
 
 # eccentricity
-box_ratio = abs(float(box[3][1] - box[0][1]))/abs(float(box[3][0] - box[2][0]))
+box_ratio = boxRatio(box)
 
 print box_ratio
 
