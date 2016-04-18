@@ -108,6 +108,12 @@ def minor_axis(points, major_axis):
     return max_diam
 
 
+#def draw_chain(chain):
+ #   chain_img = numpy.zeros(image.shape, numpy.uint8)
+
+
+
+
 def dist(p1, p2):
     return math.sqrt(math.pow(p2[1] - p1[1], 2) + math.pow(p2[0] - p1[0], 2))
 
@@ -156,7 +162,7 @@ def boundary_and_chain(img):
     return boundary, chain
 
 # importing image as gray scale image (one channel only)
-image = cv2.imread('images/ellipse.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+image = cv2.imread('images/square.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
 # making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -182,20 +188,20 @@ print chain_code
 
 # normalizing chain code to make it rotation independent
 print first_difference(chain_code)
-print subsample
+#print subsample
 
 # major and minor axis for making a bounding box. May not be applicable and should go for openCV method
-major = major_axis(boundary_points)
-minor = minor_axis(boundary_points, major)
-print major
-print minor
+#major = major_axis(boundary_points)
+#minor = minor_axis(boundary_points, major)
+#print major
+#print minor
 
 #drawing major and minor axis
-cv2.line(boundary_img, (major[1][1], major[1][0]), (major[0][1], major[0][0]), (255, 0, 0), 1)
-cv2.line(boundary_img, (minor[1][1], minor[1][0]), (minor[0][1], minor[0][0]), (255, 0, 0), 1)
+#cv2.line(boundary_img, (major[1][1], major[1][0]), (major[0][1], major[0][0]), (255, 0, 0), 1)
+#cv2.line(boundary_img, (minor[1][1], minor[1][0]), (minor[0][1], minor[0][0]), (255, 0, 0), 1)
 
 
-# creating bounding box
+# creating bounding box; numpy array is flipped compared to python list: x,y --> y,x
 temp = []
 for i in boundary_points:
     temp.append((i[1], i[0]))
@@ -208,15 +214,22 @@ cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
 
 print box
 
-box_ratio = float(box[3][0] - box[0][0])/float(box[1][1] - box[0][1])
+# eccentricity
+box_ratio = abs(float(box[3][1] - box[0][1]))/abs(float(box[3][0] - box[2][0]))
 
 print box_ratio
 
+# histogram of frequencies of direction changes in the chain code
+histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
+for i in chain_code:
+    histogram[i] += 1
+print histogram
+
 # drawing points that form major and minor axis
-cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
-cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255, 0, 255), -1)
-cv2.circle(boundary_img, (minor[1][1], minor[1][0]), 3, (255, 0, 255), -1)
-cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255, 0, 255), -1)
+#cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
+#cv2.circle(boundary_img, (major[0][1], major[0][0]), 3, (255, 0, 255), -1)
+#cv2.circle(boundary_img, (minor[1][1], minor[1][0]), 3, (255, 0, 255), -1)
+#cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255, 0, 255), -1)
 
 # showing images
 cv2.imshow('original', image)
