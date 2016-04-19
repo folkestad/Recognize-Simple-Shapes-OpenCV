@@ -256,10 +256,11 @@ def grid(shapeBox):
 def valid_grid_points(grid_points, boundary_points):
     valid_points = []
     for i in grid_points:
-        for j in boundary_points:
-            if dist(i, j) < 5:
-                valid_points.append(i)
-                break
+        for j in i:
+            for k in boundary_points:
+                if dist(j, k) < 5:
+                    valid_points.append(k)
+                    break
     return valid_points
 
 # importing image as gray scale image (one channel only)
@@ -325,7 +326,7 @@ g = grid(shapeBox(box, 10))
 
 for e in g:
     print e
-#v = valid_grid_points(g, temp)
+v = valid_grid_points(g, temp)
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
@@ -333,8 +334,8 @@ for i in chain_code:
     histogram[i] += 1
 #print histogram
 
-#for p in g:
-#    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
+for p in v:
+    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
 
 #for p in g:
 #    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
@@ -348,10 +349,10 @@ for i in chain_code:
 
 # showing images
 #cv2.imshow('original', image)
-#cv2.imshow('boundary', boundary_img)
+cv2.imshow('boundary', boundary_img)
 #cv2.imshow('subsample', subsample_img)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
 
