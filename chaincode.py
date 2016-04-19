@@ -237,17 +237,17 @@ def grid(shapeBox):
     
     opposite = orderedPoints[1][0] - orderedPoints[0][0]
     close = orderedPoints[1][1] - orderedPoints[0][1]
-    print opposite, close
 
     if close != 0:
         angle = math.atan(opposite/close)
     else:
         angle = 0
 
-    grid = []
+    grid = [[] for _ in range(ySteps + 1)]
+
     for y in range(0, ySteps + 1):
         for x in range(0, xSteps + 1):
-            grid.append([orderedPoints[0][0] + x * 10 * int(round(math.cos(angle))), orderedPoints[0][1] + y * 10])
+            grid[y].append([orderedPoints[0][0] + x * 10, orderedPoints[0][1] + y * 10])
 
     return grid
 
@@ -259,11 +259,11 @@ def valid_grid_points(grid_points, boundary_points):
         for j in boundary_points:
             if dist(i, j) < 5:
                 valid_points.append(i)
-                break;
+                break
     return valid_points
 
 # importing image as gray scale image (one channel only)
-image = cv2.imread('images/ellipse2.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+image = cv2.imread('images/triangle.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
 # making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -321,9 +321,11 @@ cv2.drawContours(image, [shapeBox(box, 10)], 0, (255, 0, 0), 1)
 box_ratio = boxRatio(box)
 
 #print box_ratio
+g = grid(shapeBox(box, 10))
 
-print grid(shapeBox(box, 10))
-
+for e in g:
+    print e
+#v = valid_grid_points(g, temp)
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
@@ -331,8 +333,12 @@ for i in chain_code:
     histogram[i] += 1
 #print histogram
 
-for p in grid(shapeBox(box, 10)):
-    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
+#for p in g:
+#    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
+
+#for p in g:
+#    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
+
 
 # drawing points that form major and minor axis
 #cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
@@ -341,11 +347,11 @@ for p in grid(shapeBox(box, 10)):
 #cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255, 0, 255), -1)
 
 # showing images
-cv2.imshow('original', image)
-cv2.imshow('boundary', boundary_img)
+#cv2.imshow('original', image)
+#cv2.imshow('boundary', boundary_img)
 #cv2.imshow('subsample', subsample_img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
 
 
 
