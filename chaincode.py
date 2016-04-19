@@ -157,7 +157,7 @@ def boundary_and_chain(img):
         if current is None:
             break
         boundary.append(current)
-        print len(boundary)
+        #print len(boundary)
         chain.append((prev + 4) % 8)
     return boundary, chain
 
@@ -168,7 +168,30 @@ def boxRatio(box):
     h = yMax - yMin
     w = xMax - xMin
     ratio = float(max(h, w))/float(min(h, w))
-    return ratio
+    return ratio, h, w
+
+def shapeBox(box, sq):
+    xs = [p[0] for p in box]
+    ys = [p[1] for p in box]
+    xMin, xMax, yMin, yMax = min(xs), max(xs), min(ys), max(ys)
+    h = yMax - yMin
+    w = xMax - xMin
+
+    addedHeight = shapeAdd(h, sq)
+    addedWidth = shapeAdd(w, sq)
+
+    newBox = numpy.array(map(lambda p: [p[0] + addedWidth, p[1] + addedHeight] if (p[0] == xMax and p[1] == yMax) 
+                        else [p[0] + addedWidth, p[1]] if (p[0] == xMax)
+                        else [p[0], p[1] + addedHeight] if (p[1] == yMax)
+                        else p, box))
+
+    print box, newBox
+
+    return newBox
+
+def shapeAdd(d, sq):
+    return 0 if d % sq == 0 else sq - d % sq
+
 
 # importing image as gray scale image (one channel only)
 image = cv2.imread('images/square.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
@@ -193,10 +216,11 @@ for i in subsample:
     subsample_img[i[0]][i[1]] = 255
 
 # printing results
-print chain_code
+#print chain_code
 
 # normalizing chain code to make it rotation independent
-print first_difference(chain_code)
+#print first_difference(chain_code)
+
 #print subsample
 
 # major and minor axis for making a bounding box. May not be applicable and should go for openCV method
@@ -219,20 +243,22 @@ numpy_boundary = numpy.array(temp)
 rect = cv2.minAreaRect(numpy_boundary)
 box = cv2.cv.BoxPoints(rect)
 box = numpy.int0(box)
-cv2.drawContours(image, [box], 0, (255, 0, 0), 1)
+cv2.drawContours(image, [shapeBox(box, 10)], 0, (255, 0, 0), 1)
 
-print box
+#print box, "\n"
+#print shapeBox(box, 10), "\n"
 
 # eccentricity
 box_ratio = boxRatio(box)
 
-print box_ratio
+#print box_ratio
+
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
 for i in chain_code:
     histogram[i] += 1
-print histogram
+#print histogram
 
 # drawing points that form major and minor axis
 #cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
@@ -242,8 +268,8 @@ print histogram
 
 # showing images
 cv2.imshow('original', image)
-cv2.imshow('boundary', boundary_img)
-cv2.imshow('subsample', subsample_img)
+#cv2.imshow('boundary', boundary_img)
+#cv2.imshow('subsample', subsample_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
