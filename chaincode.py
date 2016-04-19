@@ -256,11 +256,10 @@ def grid(shapeBox):
 def valid_grid_points(grid_points, boundary_points):
     valid_points = []
     for i in grid_points:
-        for j in i:
-            for k in boundary_points:
-                if dist(j, k) < 5:
-                    valid_points.append(k)
-                    break
+        for j in boundary_points:
+            if dist(i, j) < 5:
+                valid_points.append(i)
+                break
     return valid_points
 
 # importing image as gray scale image (one channel only)
@@ -313,7 +312,7 @@ numpy_boundary = numpy.array(temp)
 rect = cv2.minAreaRect(numpy_boundary)
 box = cv2.cv.BoxPoints(rect)
 box = numpy.int0(box)
-cv2.drawContours(image, [shapeBox(box, 10)], 0, (255, 0, 0), 1)
+cv2.drawContours(boundary_img, [shapeBox(box, 10)], 0, (255, 0, 0), 1)
 
 #print box, "\n"
 #print shapeBox(box, 10), "\n"
@@ -325,14 +324,10 @@ box_ratio = boxRatio(box)
 g = grid(shapeBox(box, 10))
 
 
-for e in g:
-    print e
-v = valid_grid_points(g, temp)
-
+#for e in g:
+#    print e
 flat_g = [item for sublist in g for item in sublist]
-
-v = valid_grid_points(g, temp)
-
+v = valid_grid_points(flat_g, temp)
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
@@ -343,8 +338,8 @@ for i in chain_code:
 for p in v:
     cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
 
-#for p in g:
-#    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
+for p in flat_g:
+    cv2.circle(image, (p[0], p[1]), 3, (255, 0, 255), -1)
 
 
 # drawing points that form major and minor axis
@@ -354,7 +349,7 @@ for p in v:
 #cv2.circle(boundary_img, (minor[0][1], minor[0][0]), 3, (255, 0, 255), -1)
 
 # showing images
-#cv2.imshow('original', image)
+cv2.imshow('original', image)
 cv2.imshow('boundary', boundary_img)
 #cv2.imshow('subsample', subsample_img)
 cv2.waitKey(0)
