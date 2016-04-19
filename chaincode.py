@@ -264,32 +264,28 @@ def valid_grid_points(grid_points, boundary_points):
 
 
 def get_chain_code(boundary):
-    start = boundary[0]
-    current = start
+    current = boundary[-1]
     chain = []
     for i in boundary:
-        if i == start:
-            continue
-        else:
-            dx = i[0]-current[0]
-            dy = i[1]-current[1]
-            if dx < 0 and dy == 0:
-                chain.append(0)
-            if dx < 0 and dy < 0:
-                chain.append(1)
-            if dx == 0 and dy < 0:
-                chain.append(2)
-            if dx > 0 and dy < 0:
-                chain.append(3)
-            if dx > 0 and dy == 0:
-                chain.append(4)
-            if dx > 0 and dy > 0:
-                chain.append(5)
-            if dx == 0 and dy > 0:
-                chain.append(6)
-            if dx < 0 and dy > 0:
-                chain.append(7)
-            current = i
+        dx = i[0]-current[0]
+        dy = i[1]-current[1]
+        if dx < 0 and dy == 0:
+            chain.append(0)
+        if dx < 0 and dy < 0:
+            chain.append(1)
+        if dx == 0 and dy < 0:
+            chain.append(2)
+        if dx > 0 and dy < 0:
+            chain.append(3)
+        if dx > 0 and dy == 0:
+            chain.append(4)
+        if dx > 0 and dy > 0:
+            chain.append(5)
+        if dx == 0 and dy > 0:
+            chain.append(6)
+        if dx < 0 and dy > 0:
+            chain.append(7)
+        current = i
     return chain
 
 
@@ -362,6 +358,7 @@ flat_g = [item for sublist in g for item in sublist]
 v = valid_grid_points(flat_g, temp)
 chain = get_chain_code(v)
 
+print v[0]
 print chain
 f_diff = first_difference(chain)
 print f_diff
