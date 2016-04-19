@@ -185,12 +185,72 @@ def shapeBox(box, sq):
                         else [p[0], p[1] + addedHeight] if (p[1] == yMax)
                         else p, box))
 
-    print box, newBox
-
     return newBox
 
 def shapeAdd(d, sq):
     return 0 if d % sq == 0 else sq - d % sq
+
+
+def grid(shapeBox):
+    shapeBox = map(list, shapeBox)
+    orderedPoints = []
+
+    yMin = 99999
+    for p in shapeBox:
+        if p[1] < yMin:
+            first = p
+            yMin = p[1]
+        elif p[1] == yMin and p[0] < first[0]:
+            first = p
+    orderedPoints.append(first)
+
+    xMax = -99999
+    for p in shapeBox:
+        if p[0] > xMax:
+            second = p
+            xMax = p[0]
+        elif p[0] == xMax and p[1] < second[1]:
+            second = p
+    orderedPoints.append(second)
+
+    yMax = -99999
+    for p  in shapeBox:
+        if p[1] > yMax:
+            third = p
+            yMax = p[1]
+        elif p[1] == yMax and p[0] > third[0]:
+            third = p
+    orderedPoints.append(third)
+
+    xMin = 99999
+    for p  in shapeBox:
+        if p[0] < xMin:
+            fourth = p
+            xMin = p[0]
+        elif p[0] == xMin and p[1] > fourth[1]:
+            fourth = p
+    orderedPoints.append(fourth)
+
+
+    xSteps = int((orderedPoints[1][0] - orderedPoints[0][0]) / 10)
+    ySteps = int((orderedPoints[3][1] - orderedPoints[0][1]) / 10)
+    
+    opposite = orderedPoints[1][0] - orderedPoints[0][0]
+    close = orderedPoints[1][1] - orderedPoints[0][1]
+    print opposite, close
+
+    if close != 0:
+        angle = math.atan(opposite/close)
+    else:
+        angle = 0
+
+    grid = []
+    for y in range(0, ySteps + 1):
+        for x in range(0, xSteps + 1):
+            grid.append([orderedPoints[0][0] + x * 10 * int(round(math.cos(angle))), orderedPoints[0][1] + y * 10])
+
+    return grid
+
 
 
 # importing image as gray scale image (one channel only)
@@ -253,12 +313,17 @@ box_ratio = boxRatio(box)
 
 #print box_ratio
 
+print grid(shapeBox(box, 10))
+
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
 for i in chain_code:
     histogram[i] += 1
 #print histogram
+
+for p in grid(shapeBox(box, 10)):
+    cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
 
 # drawing points that form major and minor axis
 #cv2.circle(boundary_img, (major[1][1], major[1][0]), 3, (255, 0, 255), -1)
@@ -268,7 +333,7 @@ for i in chain_code:
 
 # showing images
 cv2.imshow('original', image)
-#cv2.imshow('boundary', boundary_img)
+cv2.imshow('boundary', boundary_img)
 #cv2.imshow('subsample', subsample_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
