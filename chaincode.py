@@ -253,6 +253,15 @@ def grid(shapeBox):
 
 
 
+def valid_grid_points(grid_points, boundary_points):
+    valid_points = []
+    for i in grid_points:
+        for j in boundary_points:
+            if dist(i, j) < 5:
+                valid_points.append(i)
+                break;
+    return valid_points
+
 # importing image as gray scale image (one channel only)
 image = cv2.imread('images/ellipse2.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
