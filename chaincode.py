@@ -324,9 +324,15 @@ box_ratio = boxRatio(box)
 #print box_ratio
 g = grid(shapeBox(box, 10))
 
+
 for e in g:
     print e
 v = valid_grid_points(g, temp)
+
+flat_g = [item for sublist in g for item in sublist]
+
+v = valid_grid_points(g, temp)
+
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
