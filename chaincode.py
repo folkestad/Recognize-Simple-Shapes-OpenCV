@@ -257,7 +257,7 @@ def valid_grid_points(grid_points, boundary_points):
     valid_points = []
     for i in boundary_points:
         for j in grid_points:
-            if dist(i, j) < 5 and j not in valid_points:
+            if dist(i, j) <= 5 and j not in valid_points:
                 valid_points.append(j)
                 break
     return valid_points
@@ -288,10 +288,70 @@ def get_chain_code(boundary):
         current = i
     return chain
 
+def cyclic_equiv(u, v):
+    n, i, j = len(u), 0, 0
+    if n != len(v):
+        return False
+    while i < n and j < n:
+        k = 1
+        while k <= n and u[(i + k) % n] == v[(j + k) % n]:
+            k += 1
+        if k > n:
+            return True
+        if u[(i + k) % n] > v[(j + k) % n]:
+            i += k
+        else:
+            j += k
+    return False
+
+def classify(diff):
+
+    no_zeroes = filter(lambda n: n != 0, diff)
+
+    if cyclic_equiv(no_zeroes, [2, 2, 2, 2, 2, 6]):
+        return "l-shape"
+
+    if no_zeroes == [2, 2, 2, 2]:
+        firstTwo = diff.index(2)
+        firstZeroes = 0
+        secondZeroes = 0
+        first = True
+        for n in diff[firstTwo + 1:]:
+            if n == 0 and first:
+                firstZeroes += 1
+            elif n == 0:
+                secondZeroes += 1
+            elif first:
+                first = False
+            else:
+                break
+
+        if firstZeroes == secondZeroes:
+            return "square"
+        else:
+            return "rectangle"
+
+    if cyclic_equiv(no_zeroes, [2, 3, 3]):
+        return "triangle"
+
+    counter = 0
+    edges = 0
+    for n in diff:
+        if n > 4:
+            counter -= (8 - n)
+        else:
+            counter += n
+        if counter > 3 * (edges + 1):
+            edges += 1
+    if edges == 3:
+        return "triangle"
+
+    return diff
+
 
 
 # importing image as gray scale image (one channel only)
-image = cv2.imread('images/triangle2.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+image = cv2.imread('images/triangle5.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
 # making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -358,10 +418,10 @@ flat_g = [item for sublist in g for item in sublist]
 v = valid_grid_points(flat_g, temp)
 chain = get_chain_code(v)
 
-print v[0]
-print chain
+#print v[0]
 f_diff = first_difference(chain)
-print f_diff
+
+print classify(f_diff)
 
 # histogram of frequencies of direction changes in the chain code
 histogram = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
@@ -372,8 +432,8 @@ for i in chain_code:
 for p in v:
     cv2.circle(boundary_img, (p[0], p[1]), 3, (255, 0, 255), -1)
 
-for p in flat_g:
-    cv2.circle(image, (p[0], p[1]), 3, (255, 0, 255), -1)
+#for p in flat_g:
+#  cv2.circle(image, (p[0], p[1]), 3, (255, 0, 255), -1)
 
 
 
