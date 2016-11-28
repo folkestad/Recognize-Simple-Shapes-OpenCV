@@ -107,13 +107,6 @@ def minor_axis(points, major_axis):
     print slope(max_diam[0], max_diam[1])
     return max_diam
 
-
-#def draw_chain(chain):
- #   chain_img = numpy.zeros(image.shape, numpy.uint8)
-
-
-
-
 def dist(p1, p2):
     return math.sqrt(math.pow(p2[1] - p1[1], 2) + math.pow(p2[0] - p1[0], 2))
 
@@ -363,7 +356,15 @@ def shape_detection(distance_list):
 
 
 # importing image as gray scale image (one channel only)
-image = cv2.imread('images/triangle5.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
+user_input = input("1) triangle\n2) rectangle\n3) ellipse\n")
+image_src = ""
+if user_input == 1:
+    image_src = 'images/triangle5.png'
+elif user_input == 2:
+    image_src = 'images/rectangle2.png'
+else:
+    image_src = 'images/ellipse.png'
+image = cv2.imread(image_src, cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
 # making a binary image
 (thresh, im_bw) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
