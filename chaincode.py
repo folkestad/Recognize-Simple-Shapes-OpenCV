@@ -349,6 +349,18 @@ def classify(diff):
     return diff
 
 
+def circular_distance_tracing(centroid, boundary):
+    distance_list = []
+    for i in boundary:
+        distance_list.append(dist(centroid, i))
+    return distance_list
+
+
+def shape_detection(distance_list):
+    avarage_dist = sum(distance_list)/len(distance_list)
+
+
+
 
 # importing image as gray scale image (one channel only)
 image = cv2.imread('images/triangle5.png', cv2.CV_LOAD_IMAGE_GRAYSCALE)
